@@ -10,7 +10,6 @@ export class VendorFileFormat extends Model<VendorFileFormat> {
   @Column
   public columns!: string;
 
-  @PrimaryKey
   @Column
   @CreatedAt
   public autofiCreatedAt: Date = new Date();
