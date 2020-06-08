@@ -2,11 +2,9 @@ import { sequelize } from "./sequelize";
 import { V0MODELS } from './controllers/v0/model.index';
 import { loadSampleData } from "./SampleDataGenerator";
 import { FileRouter } from './controllers/v0/routes/file.router';
-
 require("./SampleDataGenerator");
 
 const express = require('express')
-const Router = express.Router;
 
 // Load table definitions into database
 sequelize.addModels(V0MODELS);
@@ -19,8 +17,6 @@ const app = express()
 const port = 3000;
 
 app.get( "/", async ( req, res ) => {
-
-  // Instantiate SQL Lite database
   res.send('Server is up!')
 });
 
