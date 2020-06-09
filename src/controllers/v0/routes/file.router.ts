@@ -1,27 +1,25 @@
+// This router contains APIs related to uploading and viewing previously uploaded file 
+// records / parsing errors.
+
 import { Router } from 'express';
-import { Vehicle } from '../models/Vehicle';
 import { UploadFile } from "../models/UploadFile";
 import { Vendor } from "../models/Vendor";
 import { VendorFileFormat } from "../models/VendorFileFormat";
-import {parseCsvFile} from "../../../CSVParser";
+import { parseCsvFile } from "../../../CSVParser";
 import { UploadFileError } from '../models/UploadFileError';
 
-// var express = require('express');
 const multer = require('multer');
-const upload = multer();
 const router = Router();
-const csv = require('csv-parser')
-const fs = require('fs')
 
-
-// Upload file
+// Upload a vehicles list file to the service
 var uploadFunction = multer({ dest: '/tmp/' }).single('uploadFile');
-router.post("/file/:vendorId", async ( req, res ) => {
+router.post("/files/:vendorId", async ( req, res ) => {
      uploadFunction(req, res, async function(err) {
         if (err instanceof multer.MulterError) {
+            // Handle errors when a user does not attach a file to the correct field.
             return res.status(400).send({ message: 'uploadFile is a required body parameter' });
         } else {
-
+            // File received. Check for valid vendor ID
             let {vendorId} = req.params;
             if (!vendorId) {
                 return res.status(400).send({ message: 'vendorId is a required parameter' });
@@ -32,18 +30,20 @@ router.post("/file/:vendorId", async ( req, res ) => {
                 return res.status(400).send({ message: `No vendor found with vendorId: ${vendorId}`});
             }
 
+            // Vendor format found. Proceed to parsing the file.
             parseCsvFile(req.file.path, fileFormat).then(function(result) {
+                // File successfully parsed. Return results to the caller.
                 return res.status(200).send(result)
             })
             .catch((err) => {
-                return res.status(400).send({"result": "Failed"})
-            })
-                
-    }
+                // Error encountered preventing file upload.
+                return res.status(500).send({"result": err})
+            })            
+        }
     })
 })
 
-// Retrieve files for a vendor
+// Retrieve previously uploaded file logs for a vendor
 router.get("/files/:vendorId", async ( req, res ) => {
 
     // Is a vendor ID provided in the query params?
@@ -62,11 +62,12 @@ router.get("/files/:vendorId", async ( req, res ) => {
         where: {vendorId: vendorId}
     })
 
+    // Return list of file log records to the client.
     res.status(200).send(files);
 
 })
 
-// Retrieve files for a vendor
+// Retrieve file parsing errors for a specific file
 router.get("/fileErrors/:fileId", async ( req, res ) => {
 
     // Is a vendor ID provided in the query params?

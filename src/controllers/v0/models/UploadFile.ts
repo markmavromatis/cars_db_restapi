@@ -5,29 +5,25 @@ import {Vendor} from "./Vendor"
 @Table
 export class UploadFile extends Model<UploadFile> {
 
-  @Column
-  public filePath!: string;
+    @Column
+    public filePath!: string;
 
-  @ForeignKey(() => Vendor)
-  @Index
-  @Column
-  public vendorId!: string;
+    @ForeignKey(() => Vendor)
+    @Index
+    @Column
+    public vendorId!: string;
 
-  @Column
-  public uploadSuccessful!: boolean;
+    @Column
+    public uploadSuccessful!: boolean;
 
-  @HasMany(() => UploadFileError)
-  errors: UploadFileError[];
+    @HasMany(() => UploadFileError)
+    errors: UploadFileError[];
 
-  @Column
-  @CreatedAt
-  public autofiCreatedAt: Date = new Date();
+    @Column
+    @CreatedAt
+    public autofiCreatedAt: Date = new Date();
 
-  @Column
-  @UpdatedAt
-  public autofiUpdatedAt: Date = new Date();
-
-  toJsonResponse() : string {
-    return "Hello World";
-  }
+    @Column
+    @UpdatedAt
+    public autofiUpdatedAt: Date = new Date();
 }

@@ -3,19 +3,19 @@ import {Table, Column, Model, HasMany, PrimaryKey, CreatedAt, UpdatedAt} from 's
 @Table
 export class Vendor extends Model<Vendor> {
 
-  @PrimaryKey
-  @Column
-  public vendorId!: string;
+    @PrimaryKey
+    @Column
+    public vendorId!: string;
 
-  @Column
-  public vendorName!: string;
+    @Column
+    public vendorName!: string;
 
-  @Column
-  @CreatedAt
-  public autofiCreatedAt: Date = new Date();
+    @Column
+    @CreatedAt
+    public autofiCreatedAt: Date = new Date();
 
-  @Column
-  @UpdatedAt
-  public autofiUpdatedAt: Date = new Date();
+    @Column
+    @UpdatedAt
+    public autofiUpdatedAt: Date = new Date();
 
 }

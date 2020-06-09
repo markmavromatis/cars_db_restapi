@@ -1,10 +1,7 @@
 import { VendorFileFormat } from "./controllers/v0/models/VendorFileFormat";
 import { Vehicle } from "./controllers/v0/models/Vehicle";
-import { IsNumeric } from "sequelize-typescript";
-import { Vendor } from "./controllers/v0/models/Vendor";
 import { UploadFile } from "./controllers/v0/models/UploadFile";
 import { UploadFileError } from "./controllers/v0/models/UploadFileError";
-import { reject, resolve } from "bluebird";
 
 const csv = require('csv-parser')
 const fs = require('fs')
@@ -27,6 +24,7 @@ const KNOWN_COLUMNS = {
 
 const TIME_FORMAT : string = "YYYYMMDDHHmmss";
 
+// Check whether a string value can be converted to a number.
 // Copied from StackOverflow answer:
 // https://stackoverflow.com/questions/23437476/in-typescript-how-to-check-if-a-string-is-numeric
 function isNumber(value: string | number): boolean
@@ -38,7 +36,7 @@ function isNumber(value: string | number): boolean
 
 // Parse CSV row to an instance of a vehicle.
 // Validate the field before conversion:
-// 1. Count # columns
+// 1. Compare # columns with expected column count in file format.
 // 2. Validate Column type
 export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: string]: string}) : Vehicle{
     const parsedColumns = fileFormat.columns.split(",")
@@ -159,7 +157,6 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
     })
 
     await uploadFile()
-    // await uploadFile().then((result) => {resolve(result)})
     
     return newFile
 }

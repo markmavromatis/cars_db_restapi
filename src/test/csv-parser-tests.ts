@@ -59,7 +59,6 @@ describe('CSVParser Validation Checks', () => {
         expect(result.make).to.equal("Chevrolet");
         expect(result.model).to.equal("Bolt");
         expect(result.price).to.equal(30000);
-        // expect(result.).to.equal(30000);
     });
 
     it('should skip unknown columns when converting a valid CSV row', () => {
@@ -73,7 +72,6 @@ describe('CSVParser Validation Checks', () => {
         expect(result.make).to.equal("Chevrolet");
         expect(result.model).to.equal("Bolt");
         expect(result.price).to.equal(30000);
-        // expect(result.).to.equal(30000);
     });
 
 })

@@ -4,26 +4,26 @@ import {UploadFile} from "./UploadFile"
 @Table
 export class UploadFileError extends Model<UploadFileError> {
 
-  @ForeignKey(() => UploadFile)
-  @Index
-  @Column
-  public uploadFileId!: number;
+    @ForeignKey(() => UploadFile)
+    @Index
+    @Column
+    public uploadFileId!: number;
 
-  @BelongsTo(() => UploadFile)
-  uploadFile: UploadFile
+    @BelongsTo(() => UploadFile)
+    uploadFile: UploadFile
 
-  @Column
-  public row!: number;
+    @Column
+    public row!: number;
 
-  @Column
-  public errorMessage!: string;
+    @Column
+    public errorMessage!: string;
 
-  @Column
-  @CreatedAt
-  public autofiCreatedAt: Date = new Date();
+    @Column
+    @CreatedAt
+    public autofiCreatedAt: Date = new Date();
 
-  @Column
-  @UpdatedAt
-  public autofiUpdatedAt: Date = new Date();
+    @Column
+    @UpdatedAt
+    public autofiUpdatedAt: Date = new Date();
 
 }

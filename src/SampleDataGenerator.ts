@@ -1,13 +1,9 @@
 import {Vendor} from './controllers/v0/models/Vendor'
 import {VendorFileFormat} from './controllers/v0/models/VendorFileFormat'
 
+// Create some vendors and vendor formats.
 export async function loadSampleData() {
 
-    // const SAMPLE_VENDORS : Vendor[] = [
-    //     new Vendor({vendorId: "A", vendorName: "Audi Dealer A"}),
-    //     new Vendor({vendorId: "B", vendorName: "Buick Dealer B"})
-    // ]
-    // SAMPLE_VENDORS.forEach(async aVendor => {await aVendor.save()})
     Vendor.bulkCreate([
         {"vendorId": "A", "vendorName": "Audi Dealer A"},
         {"vendorId": "B", "vendorName": "Buick Dealer B"}
