@@ -1,5 +1,6 @@
 import {parseCsvFile} from '../CSVParser';
 import {VendorFileFormat} from '../controllers/v0/models/VendorFileFormat'
+import {Vehicle} from '../controllers/v0/models/Vehicle'
 import { expect } from 'chai';
 import 'mocha';
 import { V0MODELS } from '../controllers/v0/model.index';
@@ -18,6 +19,19 @@ describe('FileParser Validation Checks', () => {
             // Load sample data
             await loadSampleData();
           });
+    })
+
+    beforeEach(async function() {
+        // Clear vehicles, upload files, and errors from database between tests
+        await UploadFile.destroy({
+            truncate: true
+        });
+        await UploadFileError.destroy({
+            truncate: true
+        });
+        await Vehicle.destroy({
+            truncate: true
+        });
     })
 
 
@@ -49,7 +63,22 @@ describe('FileParser Validation Checks', () => {
         const errorRecord = result.errors[0];
         expect(errorRecord.errorMessage).to.equal("Column count (4) does not match CSV field count (3)");
         expect(errorRecord.row).to.equal(5);
-})
+    })
+
+    // Test details: Upload the same file twice and verify that the data is not duplicated
+    it('should prevent duplicate records when file uploaded multiple times', async () => {
+        const fileFormat = await VendorFileFormat.findByPk("A");
+        const filePath = __dirname + "/csv-files/Valid5Records.csv"
+        // Upload attempt #1
+        await parseCsvFile(filePath, fileFormat)
+
+        // Upload attempt #2
+        await parseCsvFile(filePath, fileFormat)
+
+        const vehicleData = await Vehicle.findAndCountAll();
+
+        expect(vehicleData.count).to.equal(5)
+    })
 
 
 })

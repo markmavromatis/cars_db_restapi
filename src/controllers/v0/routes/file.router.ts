@@ -32,11 +32,7 @@ router.post("/file/:vendorId", async ( req, res ) => {
                 return res.status(400).send({ message: `No vendor found with vendorId: ${vendorId}`});
             }
 
-            // const result = parseCsvFile(req.file.path, fileFormat)
-            // console.log("FIRST RESULT = " + result)
-
             parseCsvFile(req.file.path, fileFormat).then(function(result) {
-                console.log("RESULTS = " + result)
                 return res.status(200).send(result)
             })
             .catch((err) => {
@@ -44,10 +40,6 @@ router.post("/file/:vendorId", async ( req, res ) => {
             })
                 
     }
-    // Log File in DB.   
-    // Parse file
-    // Check the format  
-    // Log Vehicles in DB
     })
 })
 

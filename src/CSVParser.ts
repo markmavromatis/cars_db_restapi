@@ -105,7 +105,23 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
             lineCounter += 1;
             try {
                 const aVehicle = parseCsvRow(fileFormat, data)
-                aVehicle.save()
+                const vehicleUuid = aVehicle.uuid
+                // Search for existing vehicle
+                let existingVehicle = Vehicle.findAll({
+                    where: {uuid: vehicleUuid, vendorId: fileFormat.vendorId}
+                }).then((result) => {
+                    if (result.length == 0) {
+                        aVehicle.save()
+                    } else {
+                        // Update existing vehicles
+                        const existingId = result[0].id;
+                        Vehicle.update(aVehicle, {
+                            where: {
+                                id: existingId
+                            }
+                        })
+                    }
+                })
             } catch (e) {
                 errors.push({"Row": lineCounter, "Message": e})
             }
