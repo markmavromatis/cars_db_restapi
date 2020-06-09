@@ -37,11 +37,20 @@ export class Vehicle extends Model<Vehicle> {
     vendorId: string;
 
     @Column
+    // Client Create Date
+    public createdate: Date;
+
+    @Column
+    // Client Update Date
+    public updatedate: Date;
+
+    @Column
     @CreatedAt
     public autofiCreatedAt: Date = new Date();
 
     @Column
     @UpdatedAt
     public autofiUpdatedAt: Date = new Date();
+
 
 }
