@@ -107,7 +107,7 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
             try {
                 const aVehicle = parseCsvRow(fileFormat, data)
                 aVehicle.save()
-                errors.push({"Row": lineCounter, "Message": "Some error"})
+                // errors.push({"Row": lineCounter, "Message": "Some error"})
             } catch (e) {
                 errors.push(e);
             }
@@ -120,17 +120,25 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
             let fileId = null
             newFile.save().then((result) => {
                 fileId = result.id
-                async () => {errors.forEach((anError) => {
-                    // Split error into row number and message
-                    const newUploadError = new UploadFileError();
-                    newUploadError.uploadFileId = fileId;
-                    newUploadError.row = anError.Row;
-                    newUploadError.errorMessage = anError.Message;
-                    newUploadError.save()
+
+                let errorCount = errors.length
+                if (errorCount == 0) {
+                    resolve("No upload errors!");
+                } else {
+                    errors.forEach((anError) => {
+                        const newUploadError = new UploadFileError();
+                        newUploadError.uploadFileId = fileId;
+                        newUploadError.row = anError.Row;
+                        newUploadError.errorMessage = anError.Message;
+                        newUploadError.save().then(() => {
+                            console.log("\tSaving error...")
+                            errorCount -= 1;
+                            if (errorCount == 0) {
+                                resolve("Final upload error written to DB");
+                            }
+                        })
                     })
                 }
-                resolve("ABC");
-                // return newFile;
             })
         })
         .on('error', error => console.error("*** CSV Parsing error: " + error))
@@ -139,7 +147,6 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
     await uploadFile()
     // await uploadFile().then((result) => {resolve(result)})
     
-    console.log("AWAIT COMPLETE")
     return newFile
 }
 
