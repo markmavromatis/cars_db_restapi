@@ -2,6 +2,9 @@ import { VendorFileFormat } from "./models/VendorFileFormat";
 import { Vehicle } from "./models/Vehicle";
 import { IsNumeric } from "sequelize-typescript";
 import { Vendor } from "./models/Vendor";
+import { UploadFile } from "./models/UploadFile";
+import { UploadFileError } from "./models/UploadFileError";
+import { reject, resolve } from "bluebird";
 
 const csv = require('csv-parser')
 const fs = require('fs')
@@ -81,14 +84,62 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
     return newVehicle;
 }
 
+// Parse a CSV file and report the results
+export async function parseCsvFile(filePath : string, fileFormat : VendorFileFormat) {
+    // throw new Error("TESTING 1-2-3")
+    let lineCounter = 0;
+    let totalRecordCount = 0;
+    const newFile = new UploadFile();
+    newFile.filePath = filePath;
+    newFile.vendorId = fileFormat.vendorId;
+    newFile.uploadSuccessful = false;
+    newFile.errors = [];
+    // Log the CSV file
+    let firstRowFields = [];
+    let rows = [];
 
-//     // parseCsvRow(fileFormat, data);
-//   rows.forEach(row => console.log(row));
+    const uploadFile = () => new Promise((resolve, reject) => {
+        let errors = [];
+        fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', (data) => {
+            lineCounter += 1;
+            try {
+                const aVehicle = parseCsvRow(fileFormat, data)
+                aVehicle.save()
+                errors.push({"Row": lineCounter, "Message": "Some error"})
+            } catch (e) {
+                errors.push(e);
+            }
+        })
+        .on('end', () => {
+            if (errors.length == 0) {
+                newFile.uploadSuccessful = true;
+            }
+
+            let fileId = null
+            newFile.save().then((result) => {
+                fileId = result.id
+                async () => {errors.forEach((anError) => {
+                    // Split error into row number and message
+                    const newUploadError = new UploadFileError();
+                    newUploadError.uploadFileId = fileId;
+                    newUploadError.row = anError.Row;
+                    newUploadError.errorMessage = anError.Message;
+                    newUploadError.save()
+                    })
+                }
+                resolve("ABC");
+                // return newFile;
+            })
+        })
+        .on('error', error => console.error("*** CSV Parsing error: " + error))
+    })
+
+    await uploadFile()
+    // await uploadFile().then((result) => {resolve(result)})
     
-//   //   // Parse first line
-//   //        // Check file format: <RecordCount>
-//   //        if (data.length != 1) {
-//   //         throw new Error("File Parse Error: First row in file should contain the Record Count!")
-//   //  parseCsvRow(fileFormat, data);
+    console.log("AWAIT COMPLETE")
+    return newFile
+}
 
-// }

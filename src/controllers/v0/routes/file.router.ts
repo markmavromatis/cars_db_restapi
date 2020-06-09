@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { Vehicle } from '../models/Vehicle';
+import { UploadFile } from "../models/UploadFile";
+import { Vendor } from "../models/Vendor";
 import { VendorFileFormat } from "../models/VendorFileFormat";
-import {parseCsvRow} from "../CSVParser";
+import {parseCsvRow, parseCsvFile} from "../CSVParser";
+import { UploadFileError } from '../models/UploadFileError';
 
 // var express = require('express');
 const multer = require('multer');
@@ -18,49 +21,28 @@ router.post("/file/:vendorId", async ( req, res ) => {
         if (err instanceof multer.MulterError) {
             return res.status(400).send({ message: 'uploadFile is a required body parameter' });
         } else {
-            // Is a vendor ID provided in the query params?
+
             let {vendorId} = req.params;
             if (!vendorId) {
                 return res.status(400).send({ message: 'vendorId is a required parameter' });
             }
-            
-            // TODO: Check that a vendor file format is available
+
             const fileFormat = await VendorFileFormat.findByPk(vendorId);
             if (!fileFormat) {
                 return res.status(400).send({ message: `No vendor found with vendorId: ${vendorId}`});
             }
-            
 
-            let lineCounter = 0;
-            let totalRecordCount = 0;
-          
-            // Log the CSV file
-            let firstRowFields = [];
-            let rows = [];
-             fs.createReadStream(req.file.path, function(err) {
-              console.log("TRAPPED: " + err);
-              })
-              .pipe(csv())
-              .on('data', async (data) => {
-                  const aVehicle = parseCsvRow(fileFormat, data)
-                  lineCounter += 1;
-                  aVehicle.save()
-                  // console.log(aVehicle);
-              })
-              .on('end', () => {
+            // const result = parseCsvFile(req.file.path, fileFormat)
+            // console.log("FIRST RESULT = " + result)
 
-
-                // // Load records
-                // rows.forEach(aRow => {
-                //   console.log(aRow);
-                //   // parseCsvRow(fileFormat, aRow)
-                // });
-
-                return res.status(200).send({message: `Successfully loaded ${lineCounter} records!`})
-
-              })
-              .on('error', error => console.error("****" + error))
-          
+            parseCsvFile(req.file.path, fileFormat).then(function(result) {
+                console.log("RESULTS = " + result)
+                return res.status(200).send(result)
+            })
+            .catch((err) => {
+                return res.status(400).send({"result": "Failed"})
+            })
+                
     }
     // Log File in DB.   
     // Parse file
@@ -68,5 +50,52 @@ router.post("/file/:vendorId", async ( req, res ) => {
     // Log Vehicles in DB
     })
 })
+
+// Retrieve files for a vendor
+router.get("/files/:vendorId", async ( req, res ) => {
+
+    // Is a vendor ID provided in the query params?
+    let {vendorId} = req.params;
+    if (!vendorId) {
+        return res.status(400).send({ message: 'vendorId is a required parameter' });
+    }
+
+    // Is this a valid vendor?
+    let vendor = await Vendor.findByPk(vendorId)
+    if (!vendor) {
+        return res.status(400).send({ message: `No vendor found with venderId: ${vendorId}` });
+    }
+
+    let files = await UploadFile.findAll({
+        where: {vendorId: vendorId}
+    })
+
+    res.status(200).send(files);
+
+})
+
+// Retrieve files for a vendor
+router.get("/fileErrors/:fileId", async ( req, res ) => {
+
+    // Is a vendor ID provided in the query params?
+    let {fileId} = req.params;
+    if (!fileId) {
+        return res.status(400).send({ message: 'fileId is a required parameter' });
+    }
+
+    // Is this a valid vendor?
+    let uploadFile = await UploadFile.findByPk(fileId)
+    if (!uploadFile) {
+        return res.status(400).send({ message: `No file found with fileId: ${fileId}` });
+    }
+
+    let errors = await UploadFileError.findAll({
+        where: {uploadFileId: fileId}
+    })
+
+    res.status(200).send(errors);
+
+})
+
 
 export const FileRouter: Router = router;
