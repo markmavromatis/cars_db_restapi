@@ -1,4 +1,4 @@
-import {parseCsvRow} from '../controllers/v0/CSVParser';
+import {parseCsvRow} from '../CSVParser';
 import {VendorFileFormat} from '../controllers/v0/models/VendorFileFormat'
 import { expect } from 'chai';
 import 'mocha';

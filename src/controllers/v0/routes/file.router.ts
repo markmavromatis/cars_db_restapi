@@ -3,7 +3,7 @@ import { Vehicle } from '../models/Vehicle';
 import { UploadFile } from "../models/UploadFile";
 import { Vendor } from "../models/Vendor";
 import { VendorFileFormat } from "../models/VendorFileFormat";
-import {parseCsvRow, parseCsvFile} from "../CSVParser";
+import {parseCsvFile} from "../../../CSVParser";
 import { UploadFileError } from '../models/UploadFileError';
 
 // var express = require('express');

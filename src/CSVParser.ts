@@ -1,9 +1,9 @@
-import { VendorFileFormat } from "./models/VendorFileFormat";
-import { Vehicle } from "./models/Vehicle";
+import { VendorFileFormat } from "./controllers/v0/models/VendorFileFormat";
+import { Vehicle } from "./controllers/v0/models/Vehicle";
 import { IsNumeric } from "sequelize-typescript";
-import { Vendor } from "./models/Vendor";
-import { UploadFile } from "./models/UploadFile";
-import { UploadFileError } from "./models/UploadFileError";
+import { Vendor } from "./controllers/v0/models/Vendor";
+import { UploadFile } from "./controllers/v0/models/UploadFile";
+import { UploadFileError } from "./controllers/v0/models/UploadFileError";
 import { reject, resolve } from "bluebird";
 
 const csv = require('csv-parser')
