@@ -106,9 +106,9 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
                 // Search for existing vehicle
                 let existingVehicle = Vehicle.findAll({
                     where: {uuid: vehicleUuid, vendorId: fileFormat.vendorId}
-                }).then((result) => {
+                }).then(async (result) => {
                     if (result.length == 0) {
-                        aVehicle.save()
+                        await aVehicle.save()
                     } else {
                         // Update existing vehicles
                         const existingId = result[0].id;
