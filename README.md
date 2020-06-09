@@ -13,6 +13,8 @@ The dealerships can then upload CSV files containing tens, hundreds, or thousand
 - CreateDate - Date that the vehicle was added to the dealership inventory
 - UpdateDate - Date that the vehicle was updated in the dealership inventory
 
+If there are errors parsing a file, clients can re-upload the files and not worry about duplicate records. The VendorId and UUID are checked for each uploaded vehicle. If there is a match with an existing record, the existing record is overwritten with the updated record. This way, if clients witness CSV parsing errors on individual rows in their vehicle files, they can fix the issues and re-upload the file to process the dropped records. 
+
 ## Installation
 
 This project is implemented using NodeJS and Express. The web server should run on any UNIX system with NodeJS and NPM installed.
@@ -32,6 +34,16 @@ This project uses an in-memory database (SQL Lite) to store dealership informati
 4. Vendors - Each dealership and their vendorId is tracked in this table.
 5. VendorFileFormat - The preferred CSV column layout for each dealership is stored in this table.
 
+## Sample Data
+
+The repo includes three example dealerships with their own file formats. 
+|VendorId|FileFormat|
+|---|---|
+|A|uuid,vin,make,model|
+|B|vin,uuid,make,model,price|
+|C|uuid,vin,make,model,year,mileage,price,zipcode,createdate,updatedate|
+
+CSVFiles can be uploaded for each of these vendors based on the file formats. See the test/ folder for some samples.
 
 ## File Storage
 
@@ -43,8 +55,14 @@ There are 5 endpoints included in this project:
 
 - (GET) http://{{host}} - This endpoint takes no arguments and returns a message if the server is up.
 - (POST) http://{{host}}/api/v0/files/:VendorID - This endpoint will upload a CSV file (specified in a form data "uploadFile" field) to the server and parse / register its vehicle records. It will return the status of the upload and whether all records were processed.
-- (GET) {{host}}/api/v0/files/:VendorID - This endpoint returns a list of files (including attributes like creation time, status, and server path) that have been uploaded by a dealer.
-- (GET) {{host}}/api/v0/fileErrors/:FileID - This endpoint returns a list of parse errors (if applicable) for a specific file.
+- (GET) http://{{host}}/api/v0/files/:VendorID - This endpoint returns a list of files (including attributes like creation time, status, and server path) that have been uploaded by a dealer.
+- (GET) http://{{host}}/api/v0/fileErrors/:FileID - This endpoint returns a list of parse errors (if applicable) for a specific file.
+- (GET) http://{{host}}/api/v0/vehicles/:VendorID - This endpoint returns all vehicles associated with a VendorID.
+
+## Tests
+
+This project includes Mocha/Chai tests for the CSV (row) parser and the File parser.
+
 
 ## License
 
