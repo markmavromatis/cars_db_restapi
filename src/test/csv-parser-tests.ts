@@ -63,4 +63,18 @@ describe('CSVParser Validation Checks', () => {
         // expect(result.).to.equal(30000);
     });
 
+    it('should skip unknown columns when converting a valid CSV row', () => {
+
+        const fileFormat = new VendorFileFormat({
+            columns: "Make,Model,Price,CreateDate,FakeField",
+            vendorId: "ABC"
+        })
+        const csvColumns = ["Chevrolet", "Bolt", "30000", "20200601140000", "Fake Value"];
+        const result = parseCsvRow(fileFormat, csvColumns);
+        expect(result.make).to.equal("Chevrolet");
+        expect(result.model).to.equal("Bolt");
+        expect(result.price).to.equal(30000);
+        // expect(result.).to.equal(30000);
+    });
+
 })

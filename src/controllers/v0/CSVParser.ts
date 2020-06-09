@@ -3,6 +3,20 @@ import { Vehicle } from "./models/Vehicle";
 import { IsNumeric } from "sequelize-typescript";
 var moment = require("moment");
 
+// Track known column names so that we can skip the others
+const KNOWN_COLUMNS = {
+    "uuid": {},
+    "vin": {},
+    "make": {},
+    "model": {},
+    "mileage": {},
+    "year": {},
+    "price": {},
+    "zipcode": {},
+    "createdate": {},
+    "updatedate": {}
+}
+
 const TIME_FORMAT : string = "YYYYMMDDHHmmss";
 
 // Copied from StackOverflow answer:
@@ -28,8 +42,12 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: string[]) : 
     }
     for (let i = 0; i < formatColumnsCount; i++) {
         const column = parsedColumns[i];
-        const csvValue = csvData[i];
         const lowerCaseFieldName = column.toLowerCase();
+        if (!KNOWN_COLUMNS[lowerCaseFieldName]) {
+            // We do not care about this column. Skip...
+            continue
+        }
+        const csvValue = csvData[i];
         let parsedValue = null;
         if (column == "Price") {
             // Validate that the CSV filed is a numeric value.
