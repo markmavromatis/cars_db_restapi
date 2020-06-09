@@ -45,12 +45,11 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
         throw new Error(`Column count (${formatColumnsCount}) does not match CSV field count (${csvColumnsCount})`);
     }
     for (let key in csvData) {
-        console.log("KEY = " + key);
+
         const column = key;
         const lowerCaseFieldName = column.toLowerCase();
         if (!KNOWN_COLUMNS[lowerCaseFieldName]) {
             // We do not care about this column. Skip...
-            console.log("SKIPPING FIELD: " + lowerCaseFieldName);
             continue
         }
         const csvValue = csvData[column];
@@ -74,20 +73,11 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
             parsedValue = dateField
         } else {
             parsedValue = csvValue;
-            console.log("ELSE: " + lowerCaseFieldName);
-            console.log("PARSED: " + csvValue);
         }
-        console.log("PARSED VALUE = " + parsedValue)
-        console.log("**** Setting field " + column.toLowerCase() + " to " + parsedValue);
         newVehicle[column.toLowerCase()] = parsedValue;
     }
     return newVehicle;
 }
-
-// // Parse a CSV file and return the results
-// // {success: true/false, rowsAdded: x}
-// export async function processCsvFile(fileFormat: VendorFileFormat, csvFilePath : string) {
-
 
 
 //     // parseCsvRow(fileFormat, data);
