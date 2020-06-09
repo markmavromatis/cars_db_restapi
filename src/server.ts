@@ -2,6 +2,7 @@ import { sequelize } from "./sequelize";
 import { V0MODELS } from './controllers/v0/model.index';
 import { loadSampleData } from "./SampleDataGenerator";
 import { FileRouter } from './controllers/v0/routes/file.router';
+import { VehicleRouter } from './controllers/v0/routes/vehicle.router';
 require("./SampleDataGenerator");
 
 const express = require('express')
@@ -21,5 +22,6 @@ app.get( "/", async ( req, res ) => {
 });
 
 app.use('/api/v0/', FileRouter)
+app.use('/api/v0/', VehicleRouter)
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

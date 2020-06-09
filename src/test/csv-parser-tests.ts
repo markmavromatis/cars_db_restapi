@@ -17,9 +17,11 @@ describe('CSVParser Validation Checks', () => {
         })
         // fileFormat.columns = "Price,CreateDate,Model";
         // const fileFormat = {"columns": "Price,CreateDate,Model"};
-        const csvColumns = ["5", "2"];
+        const csvColumns = {"Price": "5", "CreateDate": "2"};
         const fileFormatColCount = fileFormat.columns.split(",").length;
-        const csvColCount = csvColumns.length;
+        const csvColCount = Object.keys(csvColumns).length;
+        console.log("FILE FORMAT COL COUNT = " + fileFormatColCount);
+        console.log("CSV  COL COUNT = " + csvColCount);
         const expectedError = `Column count (${fileFormatColCount}) does not match CSV field count (${csvColCount})`;
     
         expect(()=>{ parseCsvRow(fileFormat, csvColumns) }).to.throw(expectedError);
@@ -31,8 +33,8 @@ describe('CSVParser Validation Checks', () => {
             columns: "Price,Model",
             vendorId: "ABC"
         })
-        const csvColumns = ["ABC", "2"];
-        const expectedError = `Column 1 (Price) is not numeric!`;
+        const csvColumns = {"Price": "ABC", "Model": "2"};
+        const expectedError = `Column Price (ABC) is not numeric!`;
     
         expect(()=>{ parseCsvRow(fileFormat, csvColumns) }).to.throw(expectedError);
     });
@@ -43,7 +45,7 @@ describe('CSVParser Validation Checks', () => {
             columns: "Price,CreateDate",
             vendorId: "ABC"
         })
-        const csvColumns = ["123", "456"];
+        const csvColumns = {"Price": "123", "CreateDate": "456"};
         const expectedError = `Unable to parse CreateDate field 456 into a date`;
             
         expect(()=>{ parseCsvRow(fileFormat, csvColumns) }).to.throw(expectedError);
@@ -55,7 +57,7 @@ describe('CSVParser Validation Checks', () => {
             columns: "Make,Model,Price,CreateDate",
             vendorId: "ABC"
         })
-        const csvColumns = ["Chevrolet", "Bolt", "30000", "20200601140000"];
+        const csvColumns = {"Make": "Chevrolet", "Model": "Bolt", "Price": "30000", "CreateDate": "20200601140000"};
         const result = parseCsvRow(fileFormat, csvColumns);
         expect(result.make).to.equal("Chevrolet");
         expect(result.model).to.equal("Bolt");
@@ -69,7 +71,7 @@ describe('CSVParser Validation Checks', () => {
             columns: "Make,Model,Price,CreateDate,FakeField",
             vendorId: "ABC"
         })
-        const csvColumns = ["Chevrolet", "Bolt", "30000", "20200601140000", "Fake Value"];
+        const csvColumns = {"Make": "Chevrolet", "Model": "Bolt", "Price": "30000", "CreateDate": "20200601140000", "FakeField": "Fake Value"};
         const result = parseCsvRow(fileFormat, csvColumns);
         expect(result.make).to.equal("Chevrolet");
         expect(result.model).to.equal("Bolt");
