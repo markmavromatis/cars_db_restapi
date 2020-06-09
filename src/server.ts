@@ -15,7 +15,7 @@ sequelize.sync().then(() =>{
 });
 
 const app = express()
-const port = 3000;
+const port = process.env.PORT || 3000; // default port to listen
 
 app.get( "/", async ( req, res ) => {
   res.send('Server is up!')
