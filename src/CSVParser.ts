@@ -91,7 +91,6 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
     newFile.vendorId = fileFormat.vendorId;
     newFile.uploadSuccessful = false;
     newFile.errors = [];
-    // Log the CSV file
     let firstRowFields = [];
     let rows = [];
 

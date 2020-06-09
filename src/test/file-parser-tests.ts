@@ -43,6 +43,22 @@ describe('FileParser Validation Checks', () => {
         })
     })
 
+    it('should parse a valid CSV file for sample Vendor C (All Fields) with no errors', async () => {
+        const fileFormat = await VendorFileFormat.findByPk("C");
+        const filePath = __dirname + "/csv-files/Valid3RecordsAllFields.csv"
+        parseCsvFile(filePath, fileFormat).then(result => {
+            expect(result.uploadSuccessful).to.equal(true);
+        })
+    })
+
+    it('should parse a valid CSV file with ALL CAPS TITLES for sample Vendor C (All Fields) with no errors', async () => {
+        const fileFormat = await VendorFileFormat.findByPk("C");
+        const filePath = __dirname + "/csv-files/Valid3RecordsAllFieldsAllCaps.csv"
+        parseCsvFile(filePath, fileFormat).then(result => {
+            expect(result.uploadSuccessful).to.equal(true);
+        })
+    })
+
     it('should parse an invalid CSV file for sample Vendor A with 1 error', async () => {
         const fileFormat = await VendorFileFormat.findByPk("A");
         const filePath = __dirname + "/csv-files/Valid4Invalid1Records.csv"
