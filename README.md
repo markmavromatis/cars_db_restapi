@@ -41,5 +41,11 @@ All uploaded files are currently stored in the /tmp/ folder of the web server.
 
 There are 5 endpoints included in this project:
 
-http://{{host}} - This endpoint takes no arguments and returns a message if the server is up.
+- (GET) http://{{host}} - This endpoint takes no arguments and returns a message if the server is up.
+- (POST) http://{{host}}/api/v0/files/:VendorID - This endpoint will upload a CSV file (specified in a form data "uploadFile" field) to the server and parse / register its vehicle records. It will return the status of the upload and whether all records were processed.
+- (GET) {{host}}/api/v0/files/:VendorID - This endpoint returns a list of files (including attributes like creation time, status, and server path) that have been uploaded by a dealer.
+- (GET) {{host}}/api/v0/fileErrors/:FileID - This endpoint returns a list of parse errors (if applicable) for a specific file.
 
+## License
+
+This project is freely distributed under the MIT license.
