@@ -15,13 +15,10 @@ describe('CSVParser Validation Checks', () => {
             columns: "Price,CreateDate,Model",
             vendorId: "ABC"
         })
-        // fileFormat.columns = "Price,CreateDate,Model";
-        // const fileFormat = {"columns": "Price,CreateDate,Model"};
+
         const csvColumns = {"Price": "5", "CreateDate": "2"};
         const fileFormatColCount = fileFormat.columns.split(",").length;
         const csvColCount = Object.keys(csvColumns).length;
-        console.log("FILE FORMAT COL COUNT = " + fileFormatColCount);
-        console.log("CSV  COL COUNT = " + csvColCount);
         const expectedError = `Column count (${fileFormatColCount}) does not match CSV field count (${csvColCount})`;
     
         expect(()=>{ parseCsvRow(fileFormat, csvColumns) }).to.throw(expectedError);

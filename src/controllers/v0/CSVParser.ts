@@ -46,7 +46,7 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
     const csvColumnsCount = Object.keys(csvData).length
     let newVehicle = new Vehicle();
     if (formatColumnsCount != csvColumnsCount) {
-        throw new Error(`Column count (${formatColumnsCount}) does not match CSV field count (${csvColumnsCount})`);
+        throw `Column count (${formatColumnsCount}) does not match CSV field count (${csvColumnsCount})`;
     }
     for (let key in csvData) {
 
@@ -61,7 +61,7 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
         if (lowerCaseFieldName == "price") {
             // Validate that the CSV filed is a numeric value.
             if (!isNumber(csvValue)) {
-                throw new Error(`Column ${column} (${csvValue}) is not numeric!`)
+                throw `Column ${column} (${csvValue}) is not numeric!`
             } else {
                 parsedValue = parseFloat(csvValue);
             }
@@ -71,7 +71,7 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
 
             const isValidDate = moment(csvValue, TIME_FORMAT, true).isValid()
             if (!isValidDate) {
-                throw new Error(`Unable to parse ${column} field ${csvValue} into a date`)
+                throw `Unable to parse ${column} field ${csvValue} into a date`
             }
             dateField = moment(csvValue, TIME_FORMAT);
             parsedValue = dateField
@@ -86,7 +86,6 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
 
 // Parse a CSV file and report the results
 export async function parseCsvFile(filePath : string, fileFormat : VendorFileFormat) {
-    // throw new Error("TESTING 1-2-3")
     let lineCounter = 0;
     let totalRecordCount = 0;
     const newFile = new UploadFile();
@@ -107,9 +106,8 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
             try {
                 const aVehicle = parseCsvRow(fileFormat, data)
                 aVehicle.save()
-                // errors.push({"Row": lineCounter, "Message": "Some error"})
             } catch (e) {
-                errors.push(e);
+                errors.push({"Row": lineCounter, "Message": e})
             }
         })
         .on('end', () => {
@@ -126,11 +124,11 @@ export async function parseCsvFile(filePath : string, fileFormat : VendorFileFor
                     resolve("No upload errors!");
                 } else {
                     errors.forEach((anError) => {
-                        const newUploadError = new UploadFileError();
-                        newUploadError.uploadFileId = fileId;
-                        newUploadError.row = anError.Row;
-                        newUploadError.errorMessage = anError.Message;
-                        newUploadError.save().then(() => {
+                        const newUploadError = UploadFileError.create({
+                            "uploadFileId": fileId,
+                            "row": anError.Row,
+                            "errorMessage": anError.Message
+                        }).then(() => {
                             console.log("\tSaving error...")
                             errorCount -= 1;
                             if (errorCount == 0) {
