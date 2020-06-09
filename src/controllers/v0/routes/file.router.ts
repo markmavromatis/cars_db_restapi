@@ -43,6 +43,7 @@ router.post("/file/:vendorId", async ( req, res ) => {
               .pipe(csv())
               .on('data', async (data) => {
                   const aVehicle = parseCsvRow(fileFormat, data)
+                  lineCounter += 1;
                   aVehicle.save()
                   // console.log(aVehicle);
               })

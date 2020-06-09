@@ -1,6 +1,7 @@
 import { VendorFileFormat } from "./models/VendorFileFormat";
 import { Vehicle } from "./models/Vehicle";
 import { IsNumeric } from "sequelize-typescript";
+import { Vendor } from "./models/Vendor";
 
 const csv = require('csv-parser')
 const fs = require('fs')
@@ -76,6 +77,7 @@ export function parseCsvRow(fileFormat : VendorFileFormat, csvData: { [id: strin
         }
         newVehicle[column.toLowerCase()] = parsedValue;
     }
+    newVehicle.vendorId = fileFormat.vendorId;
     return newVehicle;
 }
 

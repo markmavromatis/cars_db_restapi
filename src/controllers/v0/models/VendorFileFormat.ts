@@ -1,9 +1,11 @@
-import {Table, Column, Model, HasMany, PrimaryKey, CreatedAt, UpdatedAt} from 'sequelize-typescript';
+import {Table, Column, ForeignKey, Model, HasMany, PrimaryKey, CreatedAt, UpdatedAt} from 'sequelize-typescript';
+import {Vendor} from "./Vendor"
 
 @Table
 export class VendorFileFormat extends Model<VendorFileFormat> {
 
   @PrimaryKey
+  @ForeignKey(() => Vendor)
   @Column
   public vendorId!: string;
 

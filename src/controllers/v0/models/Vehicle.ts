@@ -1,4 +1,5 @@
-import {Table, Column, Model, HasMany, PrimaryKey, CreatedAt, UpdatedAt} from 'sequelize-typescript';
+import {Table, Column, ForeignKey, Index, Model, HasMany, PrimaryKey, CreatedAt, UpdatedAt} from 'sequelize-typescript';
+import {Vendor} from "./Vendor"
 
 @Table
 export class Vehicle extends Model<Vehicle> {
@@ -29,6 +30,11 @@ export class Vehicle extends Model<Vehicle> {
   @Column
   // Vehicle Price
   public price: number;
+
+  @ForeignKey(() => Vendor)
+  @Index
+  @Column
+  vendorId: string;
 
   @Column
   @CreatedAt
