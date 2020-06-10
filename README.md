@@ -1,5 +1,5 @@
 # Cars DB RestAPI
-This RestAPI service is a Proof of Concept project which supports vendors (i.e. car dealerships) registering and reviewing their inventory. Each dealership, or provider, registers a CSV file format for uploading vehicles.
+This RestAPI service is a Proof of Concept which supports vendors (i.e. car dealerships) registering and reviewing their inventory. Each dealership, or provider, registers a CSV file format for uploading vehicles.
 
 Vendors upload CSV files containing tens, hundreds, or thousands of vehicles. The system supports multiple vehicle attributes including:
 
@@ -25,6 +25,23 @@ To run a development instance, clone this project into a local folder and run a 
 
 1. Install NPM dependencies: ```npm install```
 2. Start up the dev server: ```npm run dev```
+
+## Deployment instructions
+
+This project can generate a .zip archive for AWS Elastic Beanstalk (EB) deployment using an npm command.
+
+1. Run the npm build script: ```npm run build```
+2. Create an EB build file: ```npm init```
+3. Update the .elasticbeanstalk/config.yml file with the following deploy statement:
+```
+deploy:
+  artifact: ./www/Archive.zip
+```
+4. Deploy to EB: ```eb create```
+
+## Unit Tests
+
+To run unit tests, run the npm test script: ```npm test```
 
 ## NPM Modules
 
